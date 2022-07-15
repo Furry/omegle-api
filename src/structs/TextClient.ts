@@ -1,127 +1,219 @@
-import EventEmitter from "events";
 import fetch from "node-fetch";
-import { OmegleStatus, PollResponse, PollState } from "../types/Omegle.js";
-import { ALPHABET, buildUrl, NUMERIC, pick, random } from "../utils.js";
+import { EventEmitter } from "events";
+import { GenericObject, OmegleStatus, TextClientEvents, TextClientResponse } from "../types/Omegle.js";
+import { UriBuilder } from "./Utils.js";
 
-export class TextClient extends EventEmitter {
-    private isConnected: boolean = false;
-    private _status: OmegleStatus = null as any;
-    private _session: string = null as any;
+export interface TextClient {
+    on<U extends keyof TextClientEvents>(
+        event: U, listener: TextClientEvents[U]): this;
+        
+    once<U extends keyof TextClientEvents>(
+        event: U, listener: TextClientEvents[U]): this;
 
-    constructor() {
-        super();
+    emit<U extends keyof TextClientEvents>(
+        event: U, ...args: Parameters<TextClientEvents[U]>): boolean;
+}
 
-        this.on("disconnect", () => {
-            this.isConnected = false;
-            this._session
-        })
+export class TextClient {
+    /*
+     Simple event emitter wrapper here, so we can use emit/on/once without exposing the other bloaty functions to the main class.
+    */
+    private emitter = new EventEmitter();
+    public on<U extends keyof TextClientEvents>(
+        event: U, listener: TextClientEvents[U]): this {
+        this.emitter.on(event, listener);
+        return this;
     }
 
-    private parsePollResponse(content: any): PollResponse<PollState>[] {
-        const entries = [];
-        if (content == null) {
-            return [{
-                state: "idle"
-            }]
-        }
+    public emit<U extends keyof TextClientEvents>(
+        event: U, ...args: Parameters<TextClientEvents[U]>): boolean {
+        return this.emitter.emit(event, ...args);
+    }
 
-        for (const entry of content) {
-            switch (entry[0]) {
-                case "strangerDisconnected":
-                    entries.push({
-                        state: "disconnect",
-                        body: entry[1]
-                    }); break;
-                case "identDigests":
-                    entries.push({
-                        state: "digest",
-                        body: entry[1]
-                    }); break;
-                case "connected":
-                    entries.push({
-                        state: "connect"
-                    }); break;
-                case "gotMessage":
-                    entries.push({
-                        state: "message",
-                        body: entry[1]
-                    }); break;
-                case "typing":
-                    entries.push({
-                        state: "typing"
-                    }); break;
-                case "statusInfo":
-                    entries.push({
-                        state: "status",
-                        body: entry[1]
-                    }); break;
-                default:
-                    console.log(entry);
-                    entries.push({
-                        state: "idle"
-                    }); break;
+    public once<U extends keyof TextClientEvents>(
+        event: U, listener: TextClientEvents[U]): this {
+        this.emitter.once(event, listener);
+        return this;
+    }
+
+    /*
+        Actual methods here.
+    */
+    private headers: GenericObject = {};
+    private fetchAgent?: any;
+
+    private _randid?: string;
+    private _server?: string;
+    private _session?: string;
+
+    /**
+     * Generate a random ID for the client.
+     * @returns A random ID.
+     */
+    private get randId(): string {
+        if (!this._randid) {
+            const set = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ".split("");
+            let id = "";
+            for (let i = 0; i < 8; i++) {
+                id += set[Math.floor(Math.random() * set.length)];
             }
+            this._randid = id;
         }
 
-        return entries as any;
+        return this._randid;
     }
 
-    private async poll() {
-        while (this.isConnected) {
-            try {
-                const response = await fetch(`https://${pick(this.status.servers)}.omegle.com/events`, {
-                    method: "POST",
-                    // form body
-                    body: "id=" + this._session,
-                    headers: {
-                        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-                    }
-                }).then((r) => r.json());
-    
-                for (const event of this.parsePollResponse(response)) {
-                    const e: any = event;
-                    if (e.body) {
-                        this.emit(event.state, e.body);
-                    } else {
-                        this.emit(event.state);
-                    }
-                }
-            } catch (_) {};
+    /**
+     * Get a server from omegle's server pool.
+     * Omegle returns an array of servers, but based on ./decompOmegle, it seems to select the first one this way.
+     * @returns A server from omegle's server pool.
+     */
+    private get server(): string {
+        if (!this._server) {
+            const n = Math.floor(Math.random() * 48) + 1;
+            this._server = `front${n}`;
         }
+
+        return this._server;
     }
 
-    public async getStatus(): Promise<OmegleStatus> {
-        const response = await fetch(buildUrl({
-            root: "https://front48.omegle.com/status",
+    /**
+     * Sets the http agent for all requests.
+     * @param httpAgent An optional http agent to use for fetching. Removes the agent if undefined.
+     */
+    public setAgent(httpAgent?: any) {
+        this.fetchAgent = httpAgent;
+    }
+
+    /**
+     * Consructs an omegle url.
+     * @returns An omegle url.
+     */
+    public get url() {
+        return `https://${this.server}.omegle.com/`;
+    }
+
+    /**
+     * Gets the current omegle status, including usercount, servers, and other info.
+     * @returns The OmegleStatus object.
+     * 
+     */
+    public async status(): Promise<OmegleStatus> {
+        const url = UriBuilder.from({
+            uri: this.url + "status",
             query: {
                 nocache: Math.random(),
-                randid: random(8, ...ALPHABET, ...NUMERIC)
+                randid: this.randId
             }
-        })).then((r) => r.json());
+        });
 
-        return response as OmegleStatus;
+        return await fetch(url, {
+            headers: this.headers,
+            ... (this.fetchAgent ? { agent: this.fetchAgent } : {})
+        }).then((res) => res.json()) as OmegleStatus;
     }
 
+    /**
+     * Iterates through all events in the response, emitting them to the client.
+     * @param response The response from omegle.
+     */
+    private async manageEvents(response: TextClientResponse) {
+        for (const event of response.events) {
+            const label = event[0];
+
+            this.emit("raw", event);
+
+            switch (label) {
+                case "connected":
+                    this._session = response.clientID;
+                    this.emit("connect", this._session as string);
+                    this.poll();
+                break;
+                case "identDigests":
+                    this.emit("digest", event[1].split(","));
+                break;
+                case "typing":
+                    this.emit("typing");
+                break;
+                case "gotMessage":
+                    this.emit("message", event[1]);
+                break;
+                case "statusInfo":
+                    this.emit("status", event[1] as unknown as OmegleStatus);
+                break;
+                case "disconnected":
+                    this.emit("disconnect");
+                    this._session = undefined;
+                break;
+                case "recaptchaRequired":
+                    this.emit("captcha", event[1]);
+                break;
+                default:
+                    console.log(`Unknown event: ${label}`);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Starts a long-poll loop for the omegle events, breaking when the session is closed.
+     */
+    private async poll() {
+        while (this._session) {
+            const response = await fetch(this.url + "events", {
+                method: "POST",
+                headers: {
+                    ...this.headers,
+                    "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+                },
+                body: "id=" + this._session,
+                ... (this.fetchAgent ? { agent: this.fetchAgent } : {})
+            }).then((res) => res.json());
+
+            if (response == null) {
+                this._session = undefined;
+                this.emit("disconnect");
+            } else {
+                this.manageEvents({
+                    events: response
+                } as TextClientResponse);
+            }
+
+        }
+    }
+
+    /**
+     * Sends a chat message.
+     * @param message The message content to send.
+     * 
+     * @example
+     * await <TextClient>.send("Hello, world!");
+     */
     public async send(message: string) {
-        if (!this.connected) {
-            throw new Error("Not connected");
+        if (!this._session) {
+            throw new Error("Not in an active session!");
         }
 
-        await fetch(`https://${pick(this.status.servers)}.omegle.com/send`, {
+        await fetch(this.url + "send", {
             method: "POST",
             body: `msg=${encodeURIComponent(message)}&id=${this._session}`,
             headers: {
                 "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
             }
-        });
+        })
     }
 
+    /**
+     * Sends a chat typing event, lasting for 2 seconds.
+     * @example
+     * await <TextClient>.sendTyping();
+     */
     public async sendTyping() {
-        if (!this.connected) {
-            throw new Error("Not connected");
+        if (!this._session) {
+            throw new Error("Not in an active session!");
         }
 
-        await fetch(`https://${pick(this.status.servers)}.omegle.com/send`, {
+        await fetch(this.url + "typing", {
             method: "POST",
             body: `id=${this._session}`,
             headers: {
@@ -130,53 +222,58 @@ export class TextClient extends EventEmitter {
         });
     }
 
-    public get connected(): boolean {
-        return this.isConnected;
-    }
-
-    private get status(): OmegleStatus {
-        if (this._status == null) {
-            throw new Error("Not connected! Please use launch() first.");
-        }
-
-        return this._status;
-    }
-
-    public async launch() {
-        this._status = await this.getStatus();
-    }
-
+    /**
+     * Disconnects from the current session, returning if no session is active.
+     */
     public async disconnect() {
-        if (!this.connected) {
-            throw new Error("Not connected");
-        }
+        if (!this._session) return;
 
-        await fetch(`https://${pick(this.status.servers)}.omegle.com/disconnect`, {
+        await fetch(this.url + "disconnect", {
             method: "POST",
             body: `id=${this._session}`,
             headers: {
                 "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
             }
         });
-
-        this.emit("disconnect");
     }
 
-    public async connect(lang: string = "en", topics: string[] = []) {
-        if (this.connected) {
-            throw new Error("Already connected");
+    /**
+     * Sends a captcha response back to Omegle.
+     * @param answer The captcha solution.
+     */
+    public async sendCaptcha(solution: string) {
+        await fetch(this.url + "recaptcha", {
+            method: "POST",
+            headers: {
+                "content-type": "text/plain"
+            },
+            body: solution
+        });
+    }
+
+    /**
+     * Starts a new session.
+     * @param topics The topics to search for when connecting. (Default none)
+     * @param lang The language to use for the chat. (Default 'en')
+     */
+    public async connect(topics: string[] = [], lang = "en") {
+        if (this._session) {
+            throw new Error("Already in an active session!");
         }
 
-        const response = await fetch(buildUrl({
-            "root": `https://${pick(this.status.servers)}.omegle.com/start`,
-            "query": {
+        const url = UriBuilder.from({
+            uri: this.url + "start",
+            query: {
                 caps: "recaptcha2,t",
+                firstevents: 1,
                 spid: "",
-                randid: random(8, ...ALPHABET, ...NUMERIC),
+                randid: this.randId,
                 topics: JSON.stringify(topics),
                 lang: lang
             }
-        }), {
+        })
+
+        const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -188,11 +285,13 @@ export class TextClient extends EventEmitter {
                 "sec-fetch-mode": "cors",
                 "sec-fetch-site": "same-site",
                 "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
-            }
-        }).then((r) => r.json());
+            },
+            ... (this.fetchAgent ? { agent: this.fetchAgent } : {})
+        })
 
-        this._session = (response as any);
-        this.isConnected = true;
-        await this.poll();
+        const omegleResponse = await response.json() as TextClientResponse;
+        if (omegleResponse.clientID) {
+            this.manageEvents(omegleResponse);
+        }
     }
 }

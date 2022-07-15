@@ -14,6 +14,10 @@ export interface OmegleStatus {
     servers: string[]
 }
 
+export interface GenericObject {
+    [key: string]: any;
+}
+
 export enum PollResponseState {
 
 }
@@ -27,4 +31,23 @@ export type PollResponse<T> =
     T extends "message" ? { state: "message", body: string } :
     T extends "typing" ? { state: "typing" } :
     T extends "status" ? { state: "status", body: OmegleStatus } :
+    T extends "recaptcha" ? { state: "recaptcha", body: string } :
     never;
+
+export interface TextClientEvents {
+    "status": (status: OmegleStatus) => void;
+    "raw": (content: string[]) => void;
+    "connect": (session: string) => void;
+    "message": (content: string) => void;
+    "captcha": (token: string) => void;
+    "digest": (digests: string[]) => void;
+    "disconnect": () => void;
+    "typing": () => void;
+}
+
+export interface TextClientResponse {
+    events: [
+        string[]
+    ],
+    clientID?: string
+}

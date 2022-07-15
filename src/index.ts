@@ -1,34 +1,15 @@
+// Import and re-export everything
+
 import { TextClient } from "./structs/TextClient.js";
+import * as types from "./types/Omegle.js";
 
-const client = new TextClient();
-let timeout: any;
+const toExport = { TextClient, types };
 
-// client.getStatus().then((status) => {
-//     console.log(status);
-// });
-client.launch().then(async () => {
-    await client.connect("en");
-})
+// @ts-ignore
+TextClient.default = toExport;
 
-client.on("message", (content) => {
-    // client.send("Hiya there! Need something advertised? 1 dollar per 125 omegle messages. Contact me by email at 2solace@pm.me ~");
-    console.log(content);
-})
+// @ts-ignore
+TextClient.__esModule = true;
 
-client.on("disconnect", () => {
-    client.connect();
-    // clear timeout
-    if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-    }
-})
-
-client.on("connect", async () => {
-    await client.send("Hiya there! Need something advertised? 1 dollar per 125 omegle messages. Contact me by email at 2solace@pm.me ~ \n\n(Alternatively, reply here with another form of contact and I'll reach out <3)");
-    timeout = setTimeout(() => {
-        if (client.connected) {
-            client.disconnect();
-        }
-    }, 5000);
-})
+// @ts-ignore
+export = toExport;

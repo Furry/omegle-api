@@ -1,0 +1,8 @@
+node_modules/
+tests/
+src/
+
+decompOmegle.js
+tsconfig.json
+.gitignore
+yarn.lock
