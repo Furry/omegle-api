@@ -141,7 +141,7 @@ export class TextClient {
                 case "statusInfo":
                     this.emit("status", event[1] as unknown as OmegleStatus);
                 break;
-                case "disconnected":
+                case "strangerDisconnected":
                     this.emit("disconnect");
                     this._session = undefined;
                 break;
