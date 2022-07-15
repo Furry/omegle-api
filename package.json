@@ -1,6 +1,6 @@
 {
   "name": "omegle-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -15,7 +15,13 @@
     "@types/node-fetch": "^2.6.2"
   },
   "keywords": [
-    "omegle", "chatbot", "chat", "api",
-    "omegle-api", "roulette", "chatbot-api", "chatbot-roulette"
+    "omegle",
+    "chatbot",
+    "chat",
+    "api",
+    "omegle-api",
+    "roulette",
+    "chatbot-api",
+    "chatbot-roulette"
   ]
 }
