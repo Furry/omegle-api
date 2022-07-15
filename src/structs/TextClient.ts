@@ -292,6 +292,8 @@ export class TextClient {
         const omegleResponse = await response.json() as TextClientResponse;
         if (omegleResponse.clientID) {
             this.manageEvents(omegleResponse);
+        } else {
+            this.emit("blocked")
         }
     }
 }

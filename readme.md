@@ -38,6 +38,7 @@ Omegle-API is a single-depency wrapper around the 'chat roulette' website Omegle
 | digest | String[] | An array containing hashed common interests between the two users. |
 | disconnect | None | When a session ends. |
 | typing | None | When a user starts typing. |
+| blocked | None | When an IP address is blocked from creating sessions. |
 | raw | string[] | The raw form of any event. |
 # Examples
 
