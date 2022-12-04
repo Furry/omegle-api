@@ -264,7 +264,7 @@ export class TextClient {
         const url = UriBuilder.from({
             uri: this.url + "start",
             query: {
-                caps: "recaptcha2,t",
+                caps: "recaptcha2,t2",
                 firstevents: 1,
                 spid: "",
                 randid: this.randId,
