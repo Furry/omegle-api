@@ -1,0 +1,145 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\ender\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add --dev httpsProxyAgent
+
+PATH: 
+  C:\Python310\Scripts\;C:\Python310\;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Program Files\AdoptOpenJDK\jdk-16.0.1.9-hotspot\bin;C:\Python39\Scripts\;C:\Python39\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Go\bin;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\PATH\flutter\bin;C:\Program Files\Git\cmd;C:\Program Files\Microchip\xc8\v2.31\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\ender\AppData\Local\Programs\Python\Python38\Scripts\;C:\Users\ender\AppData\Local\Programs\Python\Python38\;C:\Users\ender\scoop\shims;C:\Users\ender\.cargo\bin;C:\Users\ender\AppData\Local\Microsoft\WindowsApps;C:\PATH;C:\Users\ender\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\IntelliJ IDEA 2021.1.3\bin;C:\Users\ender\AppData\Roaming\npm;C:\Users\ender\.dotnet\tools;C:\Users\ender\go\bin;C:\tools\dart-sdk\bin;C:\Users\ender\AppData\Roaming\Pub\Cache\bin;C:\avr-gcc-11.1.0-x64-windows\bin;C:\PATH\ffmpeg-2021-10-14-git-c336c7a9d7-essentials_build\bin;C:\Users\ender\AppData\Local\GitHubDesktop\bin;C:\retdec\bin;C:\Users\ender\AppData\Local\Programs\Hyper\resources\bin;C:\Program Files (x86)\Nmap;C:\Windows\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Program Files\dotnet\;C:\Users\ender\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\Program Files\nodejs\;C:\Program Files\LLVM\bin;C:\Users\ender\AppData\Roaming\local\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\ender\anaconda3;C:\Users\ender\anaconda3\Library\mingw-w64\bin;C:\Users\ender\anaconda3\Library\usr\bin;C:\Users\ender\anaconda3\Library\bin;C:\Users\ender\anaconda3\Scripts;C:\Ruby30-x64\bin;C:\Users\ender\AppData\Local\Programs\Python\Python38\Scripts\;C:\Users\ender\AppData\Local\Programs\Python\Python38\;C:\Users\ender\scoop\shims;C:\Users\ender\.cargo\bin;C:\Users\ender\AppData\Local\Microsoft\WindowsApps;C:\PATH;C:\Users\ender\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\IntelliJ IDEA 2021.1.3\bin;C:\Users\ender\.dotnet\tools;C:\Users\ender\go\bin;C:\tools\dart-sdk\bin;C:\Users\ender\AppData\Roaming\Pub\Cache\bin;C:\avr-gcc-11.1.0-x64-windows\bin;C:\PATH\ffmpeg-2021-10-14-git-c336c7a9d7-essentials_build\bin;C:\Users\ender\AppData\Local\GitHubDesktop\bin;C:\retdec\bin;C:\Users\ender\AppData\Local\Programs\Hyper\resources\bin;C:\Program Files (x86)\Nmap;C:\Users\ender\.dotnet\tools;C:\PATH\UnrealPakTool;C:\Users\ender\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\OpenSSL-Win64\bin;C:\Users\ender\AppData\Roaming\cabal\bin;C:\tools\ghc-9.2.1\bin;C:\PATH\apache-maven-3.8.4\bin;C:\PATH\il2cppdumper;C:\src\vcpkg;C:\ghcup\bin;C:\Program Files\JetBrains\JetBrains Rider 2022.1.1\bin;;C:\mysql\bin;C:\Program Files\MongoDB\Server\5.0\bin;C:\Users\ender\AppData\Roaming\npm;C:\PATH\php;C:\PATH\pypy;C:\PATH\pypy\Scripts;;C:\Program Files\JetBrains\PyCharm Community Edition 2022.2.3\bin;;C:\Users\ender\AppData\Local\spicetify
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  18.4.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/httpsProxyAgent: Not found
+      at params.callback [as _callback] (C:\Users\ender\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:66988:18)
+      at self.callback (C:\Users\ender\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140662:22)
+      at Request.emit (node:events:537:28)
+      at Request.<anonymous> (C:\Users\ender\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141634:10)
+      at Request.emit (node:events:537:28)
+      at IncomingMessage.<anonymous> (C:\Users\ender\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141556:12)
+      at Object.onceWrapper (node:events:651:28)
+      at IncomingMessage.emit (node:events:549:35)
+      at endReadableNT (node:internal/streams/readable:1359:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+
+npm manifest: 
+  {
+    "name": "omegle-api",
+    "version": "1.0.5",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "license": "MIT",
+    "scripts": {
+      "go": "tsc && node ./dist/index.js"
+    },
+    "dependencies": {
+      "node-fetch": "2.6.7"
+    },
+    "devDependencies": {
+      "@types/node": "^18.0.0",
+      "@types/node-fetch": "^2.6.2"
+    },
+    "keywords": [
+      "omegle",
+      "chatbot",
+      "chat",
+      "api",
+      "omegle-api",
+      "roulette",
+      "chatbot-api",
+      "chatbot-roulette"
+    ]
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  # THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
+  # yarn lockfile v1
+  
+  
+  "@types/node-fetch@^2.6.2":
+    version "2.6.2"
+    resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.6.2.tgz#d1a9c5fd049d9415dce61571557104dec3ec81da"
+    integrity sha512-DHqhlq5jeESLy19TYhLakJ07kNumXWjcDdxXsLUMJZ6ue8VZJj4kLPQVE/2mdHh3xZziNF1xppu5lwmS53HR+A==
+    dependencies:
+      "@types/node" "*"
+      form-data "^3.0.0"
+  
+  "@types/node@*":
+    version "18.0.4"
+    resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.4.tgz#48aedbf35efb3af1248e4cd4d792c730290cd5d6"
+    integrity sha512-M0+G6V0Y4YV8cqzHssZpaNCqvYwlCiulmm0PwpNLF55r/+cT8Ol42CHRU1SEaYFH2rTwiiE1aYg/2g2rrtGdPA==
+  
+  "@types/node@^18.0.0":
+    version "18.0.0"
+    resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.0.tgz#67c7b724e1bcdd7a8821ce0d5ee184d3b4dd525a"
+    integrity sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==
+  
+  asynckit@^0.4.0:
+    version "0.4.0"
+    resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
+    integrity sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==
+  
+  combined-stream@^1.0.8:
+    version "1.0.8"
+    resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.8.tgz#c3d45a8b34fd730631a110a8a2520682b31d5a7f"
+    integrity sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==
+    dependencies:
+      delayed-stream "~1.0.0"
+  
+  delayed-stream@~1.0.0:
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
+    integrity sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==
+  
+  form-data@^3.0.0:
+    version "3.0.1"
+    resolved "https://registry.yarnpkg.com/form-data/-/form-data-3.0.1.tgz#ebd53791b78356a99af9a300d4282c4d5eb9755f"
+    integrity sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==
+    dependencies:
+      asynckit "^0.4.0"
+      combined-stream "^1.0.8"
+      mime-types "^2.1.12"
+  
+  mime-db@1.52.0:
+    version "1.52.0"
+    resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.52.0.tgz#bbabcdc02859f4987301c856e3387ce5ec43bf70"
+    integrity sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==
+  
+  mime-types@^2.1.12:
+    version "2.1.35"
+    resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.35.tgz#381a871b62a734450660ae3deee44813f70d959a"
+    integrity sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==
+    dependencies:
+      mime-db "1.52.0"
+  
+  node-fetch@2.6.7:
+    version "2.6.7"
+    resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
+    integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
+    dependencies:
+      whatwg-url "^5.0.0"
+  
+  tr46@~0.0.3:
+    version "0.0.3"
+    resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
+    integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
+  
+  webidl-conversions@^3.0.0:
+    version "3.0.1"
+    resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
+    integrity sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==
+  
+  whatwg-url@^5.0.0:
+    version "5.0.0"
+    resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-5.0.0.tgz#966454e8765462e37644d3626f6742ce8b70965d"
+    integrity sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==
+    dependencies:
+      tr46 "~0.0.3"
+      webidl-conversions "^3.0.0"

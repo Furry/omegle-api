@@ -8,7 +8,7 @@ export interface OmegleStatus {
     // Unsure.
     spyQueueTime: number,
     rtmfp: string,
-    antinewdpercent: number,
+    antinudepercent: number,
     spyeeQueueTime: number,
     timestamp: number,
     servers: string[]
@@ -44,6 +44,7 @@ export interface TextClientEvents {
     "disconnect": () => void;
     "typing": () => void;
     "blocked": () => void;
+    "waiting": () => void;
 }
 
 export interface TextClientResponse {

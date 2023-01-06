@@ -41,6 +41,8 @@ export class TextClient {
     */
     private headers: GenericObject = {};
     private fetchAgent?: any;
+    private cc: string | null = null;
+    private cachedStatus: OmegleStatus | null = null;
 
     private _randid?: string;
     private _server?: string;
@@ -107,10 +109,13 @@ export class TextClient {
             }
         });
 
-        return await fetch(url, {
+        const status = await fetch(url, {
             headers: this.headers,
             ... (this.fetchAgent ? { agent: this.fetchAgent } : {})
         }).then((res) => res.json()) as OmegleStatus;
+
+        this.cachedStatus = status;
+        return status;
     }
 
     /**
@@ -148,6 +153,9 @@ export class TextClient {
                 case "recaptchaRequired":
                     this.emit("captcha", event[1]);
                 break;
+                case "waiting":
+                    this.emit("waiting");
+                break;
                 default:
                     console.log(`Unknown event: ${label}`);
                 break;
@@ -180,6 +188,21 @@ export class TextClient {
             }
 
         }
+    }
+
+    /**
+     * An antinude measure, this generates a "client cookie" to send with the request that simply verifies the antinude server is running.
+     */
+    private async generateCC() {
+        const server = this.cachedStatus?.antinudeservers[Math.floor(Math.random() * this.cachedStatus?.antinudeservers.length)];
+        const cc = await fetch(`https://${server}/check`, {
+            headers: this.headers,
+            method: "POST",
+            ... (this.fetchAgent ? { agent: this.fetchAgent } : {})
+        }).then((res) => res.text());
+
+        this.cc = cc;
+        return cc;
     }
 
     /**
@@ -261,13 +284,23 @@ export class TextClient {
             throw new Error("Already in an active session!");
         }
 
+        if (this.cachedStatus == null) {
+            this.cachedStatus = await this.status();
+            this.emit("status", this.cachedStatus);
+        }
+
+        if (this.cc == null) {
+            await this.generateCC();
+        }
+
         const url = UriBuilder.from({
             uri: this.url + "start",
             query: {
-                caps: "recaptcha2,t2",
+                caps: "recaptcha2,t3",
                 firstevents: 1,
                 spid: "",
                 randid: this.randId,
+                cc: this.cc,
                 topics: JSON.stringify(topics),
                 lang: lang
             }
