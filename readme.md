@@ -66,7 +66,7 @@ client.connect(["applebees", "programming"]);
 ## Proxy Support
 ```js
 const Omegle = require("omegle-api");
-const HttpProxyAgent = require("httpProxyAgent");
+const HttpProxyAgent = require("http-proxy-agent");
 
 const client = new Omegle.TextClient();
 
