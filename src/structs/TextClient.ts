@@ -39,6 +39,8 @@ export class TextClient {
     /*
         Actual methods here.
     */
+    private topics: string[] = [];
+    private language:  string | null = null;
     private headers: GenericObject = {};
     private fetchAgent?: any;
     private cc: string | null = null;
@@ -130,6 +132,9 @@ export class TextClient {
 
             switch (label) {
                 case "connected":
+                    if (this.language != "en") {
+                        return
+                    }
                     this._session = response.clientID;
                     this.emit("connect", this._session as string);
                     this.poll();
@@ -154,6 +159,11 @@ export class TextClient {
                     this.emit("captcha", event[1]);
                 break;
                 case "waiting":
+                    if (this.language != "en") {
+                        this._session = response.clientID;
+                        this.emit("connect", this._session as string);
+                        this.poll();
+                    }
                     this.emit("waiting");
                 break;
                 default:
@@ -275,11 +285,30 @@ export class TextClient {
     }
 
     /**
-     * Starts a new session.
-     * @param topics The topics to search for when connecting. (Default none)
-     * @param lang The language to use for the chat. (Default 'en')
+     * Sets the client language
+     * @returns whether or not the client is currently connected to a user
      */
-    public async connect(topics: string[] = [], lang = "en") {
+    public isConnected() {
+        return this._session != null;
+    }
+
+    /**
+     * Sets the client language
+     * @param language The string containing the language value (eg. "en")
+     */
+    public setLanguage(language: string) {
+        this.language = language
+    }
+    
+    /**
+     * Sets the client topics
+     * @param topics The array containing the topics (eg. ["politics", "sports"])
+     */
+    public setTopics(topics: string[]) {
+        this.topics = topics
+    }
+
+    public async connect() {
         if (this._session) {
             throw new Error("Already in an active session!");
         }
@@ -293,6 +322,10 @@ export class TextClient {
             await this.generateCC();
         }
 
+        if (!this.language) {
+            this.language = "en";
+        }
+
         const url = UriBuilder.from({
             uri: this.url + "start",
             query: {
@@ -301,8 +334,8 @@ export class TextClient {
                 spid: "",
                 randid: this.randId,
                 cc: this.cc,
-                topics: JSON.stringify(topics),
-                lang: lang
+                topics: this.topics.length ? JSON.stringify(this.topics) : '',
+                lang: this.language
             }
         })
 

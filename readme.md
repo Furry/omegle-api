@@ -60,7 +60,8 @@ client.connect();
 const Omegle = require("omegle-api");
 
 const client = new Omegle.TextClient();
-client.connect(["applebees", "programming"]);
+client.setTopics(["applebees", "programming"]);
+client.connect();
 ```
 
 ## Proxy Support
