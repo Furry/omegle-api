@@ -271,6 +271,8 @@ export class TextClient {
                 "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
             }
         });
+
+        this._session = undefined;
     }
 
     /**
