@@ -166,8 +166,11 @@ export class TextClient {
                     }
                     this.emit("waiting");
                 break;
+                case "stoppedTyping": 
+                this.emit("stoppedTyping");
+                break
                 default:
-                    console.log(`Unknown event: ${label}`);
+                    console.warn("Unknown event: ", event)
                 break;
             }
         }
@@ -285,7 +288,7 @@ export class TextClient {
     }
 
     /**
-     * Sets the client language
+     * Checks if the client is currently connected to a user.
      * @returns whether or not the client is currently connected to a user
      */
     public isConnected() {
