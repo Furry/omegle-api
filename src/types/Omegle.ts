@@ -43,6 +43,7 @@ export interface TextClientEvents {
     "digest": (digests: string[]) => void;
     "disconnect": () => void;
     "typing": () => void;
+    "stoppedTyping": () => void;
     "blocked": () => void;
     "waiting": () => void;
 }
